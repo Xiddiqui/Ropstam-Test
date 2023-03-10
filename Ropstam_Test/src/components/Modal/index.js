@@ -17,13 +17,42 @@ import {AppBorderColor, AppTextColor, cardColor} from '../../constants/colors';
 import {fontFamily} from '../../constants/fonts';
 import {ApptextInput} from '../textInput';
 import RNPickerSelect from 'react-native-picker-select';
+import * as yup from 'yup';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {Controller, FormProvider, useForm} from 'react-hook-form';
 
 const AppModal = () => {
   const [modalVisible, setModalVisible] = useState(true);
-  const [Model, setModel] = useState('');
-  const [reg, setReg] = useState('');
-  const [color, setColor] = useState('');
-  const [cati, setCati] = useState('');
+
+  // This schema is for validation
+  const schema = yup.object().shape({
+    model: yup.string().required('Model is required'),
+    color: yup.string().required('Color is required'),
+    reg: yup.string().required("Color can't be blank"),
+    cat: yup.mixed().required("Category can't be blank"),
+  });
+  const methods = useForm({
+    defaultValues: {
+      model: '',
+      color: '',
+      reg: '',
+      cat: '',
+    },
+    mode: 'all',
+    resolver: yupResolver(schema),
+  });
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+    watch,
+    getValues,
+    reset,
+  } = methods;
+
+  const onSubmit = handleSubmit(async values => {
+    console.log(values);
+  });
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -35,40 +64,105 @@ const AppModal = () => {
           setModalVisible(!modalVisible);
         }}>
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Add car</Text>
-            <View style={styles.pickerView}>
-              <RNPickerSelect
-                onValueChange={value => console.log(value)}
-                style={{
-                  inputAndroid: styles.picker,
-                }}
-                items={[
-                  {label: 'Football', value: 'football'},
-                  {label: 'Baseball', value: 'baseball'},
-                  {label: 'Hockey', value: 'hockey'},
-                ]}
+          <FormProvider {...methods}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Add car</Text>
+              <Controller
+                render={({field: {value, onChange}}) => (
+                  <View>
+                    <View style={styles.pickerView}>
+                      <RNPickerSelect
+                        value={value}
+                        onValueChange={value => onChange(value)}
+                        style={{
+                          inputAndroid: styles.picker,
+                        }}
+                        items={[
+                          {label: 'BMW', value: 'BMW'},
+                          {label: 'Honda', value: 'Honda'},
+                          {label: 'Corola', value: 'Corola'},
+                          {label: 'Faw', value: 'Faw'},
+                        ]}
+                      />
+                    </View>
+                    {errors.cat && (
+                      <Text style={[styles.errorMessageText]}>
+                        {errors.cat.message}
+                      </Text>
+                    )}
+                  </View>
+                )}
+                name="cat"
               />
+
+              <Controller
+                render={({field: {value, onChange}}) => (
+                  <View>
+                    <TextInput
+                      placeholder="Model"
+                      value={value}
+                      style={styles.textInput}
+                      onChangeText={val => {
+                        onChange(val);
+                      }}
+                      placeholderTextColor={AppTextColor.primary}
+                    />
+                    {errors.model && (
+                      <Text style={[styles.errorMessageText]}>
+                        {errors.model.message}
+                      </Text>
+                    )}
+                  </View>
+                )}
+                name="model"
+              />
+              <Controller
+                render={({field: {value, onChange}}) => (
+                  <View>
+                    <TextInput
+                      placeholder="Registration"
+                      value={value}
+                      style={styles.textInput}
+                      onChangeText={val => {
+                        onChange(val);
+                      }}
+                      placeholderTextColor={AppTextColor.primary}
+                    />
+                    {errors.reg && (
+                      <Text style={[styles.errorMessageText]}>
+                        {errors.reg.message}
+                      </Text>
+                    )}
+                  </View>
+                )}
+                name="Registration"
+              />
+              <Controller
+                render={({field: {value, onChange}}) => (
+                  <View>
+                    <TextInput
+                      placeholder="Color"
+                      value={value}
+                      style={styles.textInput}
+                      onChangeText={val => {
+                        onChange(val);
+                      }}
+                      placeholderTextColor={AppTextColor.primary}
+                    />
+                    {errors.color && (
+                      <Text style={[styles.errorMessageText]}>
+                        {errors.color.message}
+                      </Text>
+                    )}
+                  </View>
+                )}
+                name="color"
+              />
+              <TouchableOpacity style={styles.btn} onPress={onSubmit}>
+                <Text style={styles.btnText}>Save</Text>
+              </TouchableOpacity>
             </View>
-            <TextInput
-              placeholder="Model"
-              style={styles.textInput}
-              placeholderTextColor={AppTextColor.primary}
-            />
-            <TextInput
-              placeholder="Registration"
-              style={styles.textInput}
-              placeholderTextColor={AppTextColor.primary}
-            />
-            <TextInput
-              placeholder="Color"
-              style={styles.textInput}
-              placeholderTextColor={AppTextColor.primary}
-            />
-            <TouchableOpacity style={styles.btn}>
-              <Text style={styles.btnText}>Save</Text>
-            </TouchableOpacity>
-          </View>
+          </FormProvider>
         </View>
       </Modal>
     </View>
@@ -96,17 +190,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
   },
   textStyle: {
     color: 'white',

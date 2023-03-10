@@ -7,35 +7,39 @@ import {
 } from 'react-native-responsive-dimensions';
 import {AppTextColor, cardColor} from '../../constants/colors';
 import {fontFamily} from '../../constants/fonts';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
-export const ListingsCard = () => {
+export const ListingsCard = props => {
+  const {name, color, reg, delPress} = props;
   return (
     <View style={styles.hotOfferContainer}>
-      <Image
+      {/* <Image
         source={require('../../assets/images/hotOffers/car1.png')}
         style={styles.HotOffersCardImage}
-      />
+      /> */}
       <View>
-        <Text style={styles.HotOffersCardHeading}>Super Cars</Text>
+        <Text style={styles.HotOffersCardHeading}>{name}</Text>
         <View style={styles.foundTxtView}>
-          <Text style={styles.foundTxt}>We found 28 offers</Text>
-          <Image
-            source={require('../../assets/images/hotOffers/forward.png')}
-            style={styles.forwardIcon}
-          />
+          <Text style={styles.foundTxt}>Color : {color}</Text>
         </View>
         <Text
           style={[
             styles.HotOffersCardHeading,
             {
               color: AppTextColor.primary,
-              width: responsiveWidth(40),
+              width: responsiveWidth(70),
               marginTop: responsiveHeight(1),
             },
           ]}>
-          Starting from $65 / Day
+          Registration : {reg}
         </Text>
       </View>
+      <AntDesign
+        name={'delete'}
+        size={responsiveFontSize(2.5)}
+        color={'red'}
+        onPress={delPress}
+      />
     </View>
   );
 };
@@ -70,6 +74,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingRight: responsiveWidth(4),
     paddingVertical: responsiveHeight(1),
+    paddingLeft: responsiveWidth(3),
   },
   HotOffersCardImage: {
     height: responsiveWidth(30),

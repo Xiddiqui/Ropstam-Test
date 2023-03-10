@@ -8,10 +8,14 @@ import {
 } from '../../components/buttons';
 import {ApptextInput} from '../../components/textInput';
 import {Appearance} from 'react-native';
+import * as yup from 'yup';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {Controller, FormProvider, useForm} from 'react-hook-form';
 
 const Login = props => {
   const colorScheme = Appearance.getColorScheme();
-  const [isVisisble, setIsVisible] = useState(false);
+  const [isVisisble, setIsVisible] = useState(true);
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
